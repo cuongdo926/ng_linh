@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
 import { FilterType } from '../model';
 import { TodoService } from '../services/todo.service';
@@ -8,6 +8,7 @@ import { TodoService } from '../services/todo.service';
   selector: 'app-footer',
   imports: [CommonModule],
   templateUrl: './footer.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FooterComponent {
   service = inject(TodoService);

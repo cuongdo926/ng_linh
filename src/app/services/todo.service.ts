@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
 
 import { BehaviorSubject, combineLatest, map } from 'rxjs';
 
@@ -16,17 +17,17 @@ const initialState: State = {
   items: [],
 };
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class TodoService {
-  private _state$ = new BehaviorSubject<State>(initialState);
+  private http = inject(HttpClient);
 
-  private filterType$ = this._state$.pipe(map((x) => x.filterType));
-  activeCount$ = this._state$.pipe(
+  private state$ = new BehaviorSubject<State>(initialState);
+
+  private filterType$ = this.state$.pipe(map((x) => x.filterType));
+  activeCount$ = this.state$.pipe(
     map((x) => x.items.filter((x) => !x.completed).length)
   );
-  filteredItems$ = this._state$.pipe(
+  filteredItems$ = this.state$.pipe(
     map(({ filterType, items }) => {
       switch (filterType) {
         case 'active':
@@ -40,7 +41,7 @@ export class TodoService {
   );
 
   vm$ = combineLatest([
-    this._state$,
+    this.state$,
     this.activeCount$,
     this.filteredItems$,
   ]).pipe(
@@ -54,22 +55,29 @@ export class TodoService {
   );
 
   load(): void {
-    let items: Todo[] = [];
-    for (let index = 0; index < 5; index++) {
-      items.push({
-        id: faker.string.uuid(),
-        title: faker.book.title(),
-        completed: faker.datatype.boolean(),
+    // let items: Todo[] = [];
+    // for (let index = 0; index < 5; index++) {
+    //   items.push({
+    //     id: faker.string.uuid(),
+    //     title: faker.book.title(),
+    //     completed: faker.datatype.boolean(),
+    //   });
+    // }
+    // this.patchValue({
+    //   items: items,
+    // });
+    this.http
+      .get<Todo[]>(`https://jsonplaceholder.typicode.com/todos?_limit=10`)
+      .subscribe((items) => {
+        this.patchValue({
+          items: items,
+        });
       });
-    }
-    this.patchValue({
-      items: items,
-    });
   }
 
   toggle(item: Todo) {
     this.patchValue({
-      items: this._state$.value.items.map((todo) =>
+      items: this.state$.value.items.map((todo) =>
         todo.id === item.id ? { ...todo, completed: !todo.completed } : todo
       ),
     });
@@ -81,7 +89,7 @@ export class TodoService {
     }
 
     let newItems = [
-      ...this._state$.value.items,
+      ...this.state$.value.items,
       {
         id: faker.string.uuid(),
         title: title,
@@ -101,13 +109,13 @@ export class TodoService {
 
   clear() {
     this.patchValue({
-      items: this._state$.value.items.filter((x) => !x.completed),
+      items: this.state$.value.items.filter((x) => !x.completed),
     });
   }
 
   patchValue(value: Partial<State>) {
-    this._state$.next({
-      ...this._state$.value,
+    this.state$.next({
+      ...this.state$.value,
       ...value,
     });
   }

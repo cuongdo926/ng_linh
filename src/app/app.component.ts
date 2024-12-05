@@ -1,5 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import { FooterComponent } from './footer/footer.component';
@@ -11,6 +16,8 @@ import { TodoService } from './services/todo.service';
   standalone: true,
   imports: [RouterOutlet, CommonModule, FooterComponent],
   templateUrl: './app.component.html',
+  providers: [TodoService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
   title = 'my-app';
