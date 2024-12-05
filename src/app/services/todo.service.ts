@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, map } from 'rxjs';
+import { BehaviorSubject, combineLatest, map } from 'rxjs';
 
 import { faker } from '@faker-js/faker';
 
@@ -21,13 +21,11 @@ const initialState: State = {
 })
 export class TodoService {
   private _state$ = new BehaviorSubject<State>(initialState);
-  state$ = this._state$.asObservable();
 
-  filterType$ = this._state$.pipe(map((x) => x.filterType));
+  private filterType$ = this._state$.pipe(map((x) => x.filterType));
   activeCount$ = this._state$.pipe(
     map((x) => x.items.filter((x) => !x.completed).length)
   );
-
   filteredItems$ = this._state$.pipe(
     map(({ filterType, items }) => {
       switch (filterType) {
@@ -38,6 +36,20 @@ export class TodoService {
         default:
           return items;
       }
+    })
+  );
+
+  vm$ = combineLatest([
+    this._state$,
+    this.activeCount$,
+    this.filteredItems$,
+  ]).pipe(
+    map(([{ filterType }, count, filteredItems]) => {
+      return {
+        filteredItems: filteredItems,
+        filterType: filterType,
+        count: count,
+      };
     })
   );
 

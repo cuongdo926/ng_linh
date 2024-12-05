@@ -1,21 +1,21 @@
-<div class="flex justify-between">
-  <div>{{ activeCount$ | async }} items left</div>
-  <div class="space-x-3" *ngIf="filterType$ | async as filterType">
+<div class="flex justify-between" *ngIf="vm$ | async as vm">
+  <div>{{ vm.count }} items left</div>
+  <div class="space-x-3">
     <button
       (click)="setFilter('all')"
-      [ngClass]="{ 'font-bold': filterType === 'all' }"
+      [ngClass]="{ 'font-bold': vm.filterType === 'all' }"
     >
       All
     </button>
     <button
       (click)="setFilter('active')"
-      [ngClass]="{ 'font-bold': filterType === 'active' }"
+      [ngClass]="{ 'font-bold': vm.filterType === 'active' }"
     >
       Active
     </button>
     <button
       (click)="setFilter('completed')"
-      [ngClass]="{ 'font-bold': filterType === 'completed' }"
+      [ngClass]="{ 'font-bold': vm.filterType === 'completed' }"
     >
       Completed
     </button>

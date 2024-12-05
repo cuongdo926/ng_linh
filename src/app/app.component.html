@@ -6,11 +6,11 @@
     class="border border-black"
     #text
   />
-  <ul>
+  <ul *ngIf="vm$ | async as vm">
     <!-- @for (item of items; track $index) {
     <li>{{ item.name }}</li>
     } -->
-    <li *ngFor="let item of filteredItems$ | async">
+    <li *ngFor="let item of vm.filteredItems">
       <div class="flex">
         <div class="w-4 cursor-pointer" (click)="toggle(item)">
           <span *ngIf="item.completed">x</span>

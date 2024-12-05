@@ -16,8 +16,7 @@ export class AppComponent implements OnInit {
   title = 'my-app';
   service = inject(TodoService);
 
-  state$ = this.service.state$;
-  filteredItems$ = this.service.filteredItems$;
+  vm$ = this.service.vm$;
 
   ngOnInit(): void {
     this.service.load();
