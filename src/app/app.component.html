@@ -6,27 +6,30 @@
     class="border border-black"
     #text
   />
-  <ul *ngIf="vm$ | async as vm">
-    <!-- @for (item of items; track $index) {
+  <ng-container *ngIf="vm$ | async as vm">
+    <div *ngIf="vm.isLoading">Loading...</div>
+    <ul>
+      <!-- @for (item of items; track $index) {
     <li>{{ item.name }}</li>
     } -->
-    <li *ngFor="let item of vm.filteredItems">
-      <div class="flex">
-        <div class="w-4 cursor-pointer" (click)="toggle(item)">
-          <span *ngIf="item.completed">x</span>
-        </div>
-        <div
-          [ngClass]="{
+      <li *ngFor="let item of vm.filteredItems">
+        <div class="flex">
+          <div class="w-4 cursor-pointer" (click)="toggle(item)">
+            <span *ngIf="item.completed">x</span>
+          </div>
+          <div
+            [ngClass]="{
             'line-through text-gray-500': item.completed,
           }"
-        >
-          {{ item.title }}
+          >
+            {{ item.title }}
+          </div>
         </div>
-      </div>
-    </li>
-  </ul>
-  <hr />
-  <app-footer></app-footer>
+      </li>
+    </ul>
+    <hr />
+  </ng-container>
+  <div app-footer></div>
 
   <router-outlet />
 </div>

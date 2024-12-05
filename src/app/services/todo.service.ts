@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 
-import { BehaviorSubject, combineLatest, map } from 'rxjs';
+import { BehaviorSubject, combineLatest, delay, map, tap } from 'rxjs';
 
 import { faker } from '@faker-js/faker';
 
@@ -10,11 +10,13 @@ import { FilterType, Todo } from '../model';
 type State = {
   filterType: FilterType;
   items: Todo[];
+  isLoading: boolean;
 };
 
 const initialState: State = {
   filterType: 'all',
   items: [],
+  isLoading: false,
 };
 
 @Injectable()
@@ -45,11 +47,12 @@ export class TodoService {
     this.activeCount$,
     this.filteredItems$,
   ]).pipe(
-    map(([{ filterType }, count, filteredItems]) => {
+    map(([{ filterType, isLoading }, count, filteredItems]) => {
       return {
         filteredItems: filteredItems,
         filterType: filterType,
         count: count,
+        isLoading: isLoading,
       };
     })
   );
@@ -66,17 +69,25 @@ export class TodoService {
     // this.patchValue({
     //   items: items,
     // });
+    this.patchState({
+      isLoading: true,
+    });
     this.http
       .get<Todo[]>(`https://jsonplaceholder.typicode.com/todos?_limit=10`)
-      .subscribe((items) => {
-        this.patchValue({
-          items: items,
-        });
-      });
+      .pipe(
+        delay(2000),
+        tap((items) => {
+          this.patchState({
+            items: items,
+            isLoading: false,
+          });
+        })
+      )
+      .subscribe();
   }
 
   toggle(item: Todo) {
-    this.patchValue({
+    this.patchState({
       items: this.state$.value.items.map((todo) =>
         todo.id === item.id ? { ...todo, completed: !todo.completed } : todo
       ),
@@ -96,24 +107,24 @@ export class TodoService {
         completed: false,
       },
     ];
-    this.patchValue({
+    this.patchState({
       items: newItems,
     });
   }
 
   setFilter(type: FilterType) {
-    this.patchValue({
+    this.patchState({
       filterType: type,
     });
   }
 
   clear() {
-    this.patchValue({
+    this.patchState({
       items: this.state$.value.items.filter((x) => !x.completed),
     });
   }
 
-  patchValue(value: Partial<State>) {
+  patchState(value: Partial<State>) {
     this.state$.next({
       ...this.state$.value,
       ...value,

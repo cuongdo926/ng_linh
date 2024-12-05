@@ -5,10 +5,13 @@ import { FilterType } from '../model';
 import { TodoService } from '../services/todo.service';
 
 @Component({
-  selector: 'app-footer',
+  selector: 'app-footer,[app-footer]',
   imports: [CommonModule],
   templateUrl: './footer.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    class: 'flex justify-between',
+  },
 })
 export class FooterComponent {
   service = inject(TodoService);

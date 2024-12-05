@@ -1,4 +1,4 @@
-<div class="flex justify-between" *ngIf="vm$ | async as vm">
+<ng-container *ngIf="vm$ | async as vm">
   <div>{{ vm.count }} items left</div>
   <div class="space-x-3">
     <button
@@ -21,4 +21,4 @@
     </button>
   </div>
   <button (click)="clear()">Clear</button>
-</div>
+</ng-container>
