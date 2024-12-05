@@ -1,0 +1,24 @@
+<div class="flex justify-between">
+  <div>{{ activeCount$ | async }} items left</div>
+  <div class="space-x-3" *ngIf="filterType$ | async as filterType">
+    <button
+      (click)="setFilter('all')"
+      [ngClass]="{ 'font-bold': filterType === 'all' }"
+    >
+      All
+    </button>
+    <button
+      (click)="setFilter('active')"
+      [ngClass]="{ 'font-bold': filterType === 'active' }"
+    >
+      Active
+    </button>
+    <button
+      (click)="setFilter('completed')"
+      [ngClass]="{ 'font-bold': filterType === 'completed' }"
+    >
+      Completed
+    </button>
+  </div>
+  <button (click)="clear()">Clear</button>
+</div>
