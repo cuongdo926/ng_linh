@@ -10,7 +10,7 @@
     <!-- @for (item of items; track $index) {
     <li>{{ item.name }}</li>
     } -->
-    <li *ngFor="let item of filteredItems">
+    <li *ngFor="let item of filteredItems$ | async">
       <div class="flex">
         <div class="w-4 cursor-pointer" (click)="toggle(item)">
           <span *ngIf="item.completed">x</span>
@@ -20,15 +20,16 @@
             'line-through text-gray-500': item.completed,
           }"
         >
-          {{ item.name }}
+          {{ item.title }}
         </div>
       </div>
     </li>
   </ul>
+  <hr />
 
   <div class="flex justify-between">
     <div>{{ activeCount }} items left</div>
-    <div class="space-x-3">
+    <div class="space-x-3" *ngIf="filterType$ | async as filterType">
       <button
         (click)="setFilter('all')"
         [ngClass]="{ 'font-bold': filterType === 'all' }"
